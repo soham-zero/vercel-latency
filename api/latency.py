@@ -40,10 +40,18 @@ def percentile(values, p):
 @app.options("/api/latency")
 def options():
     response = Response()
+
     response.headers["Access-Control-Allow-Origin"] = "*"
     response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
     response.headers["Access-Control-Allow-Headers"] = "*"
+
+    # Important for validator's fetch().headers.get(...)
+    response.headers["Access-Control-Expose-Headers"] = (
+        "Access-Control-Allow-Origin"
+    )
+
     return response
+
 
 @app.post("/api/latency")
 def latency(req: RequestBody):
@@ -89,6 +97,8 @@ def latency(req: RequestBody):
     return JSONResponse(
         content={"regions": result},
         headers={
-            "Access-Control-Allow-Origin": "*"
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Expose-Headers":
+                "Access-Control-Allow-Origin"
         }
     )
