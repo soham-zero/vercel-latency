@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Response
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import json
@@ -8,11 +8,11 @@ app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_methods=["POST"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
-with open("q-vercel-latency.json") as f:
+with open("q-vercel-latency.json", "r") as f:
     DATA = json.load(f)
 
 
@@ -36,8 +36,17 @@ def percentile(values, p):
     return values[lower]
 
 
+@app.options("/api/latency")
+def options():
+    response = Response()
+    response.headers["Access-Control-Allow-Origin"] = "*"
+    response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "*"
+    return response
+
+
 @app.post("/api/latency")
-def latency(req: RequestBody):
+def latency(req: RequestBody, response: Response):
     result = []
 
     for region in req.regions:
@@ -77,4 +86,8 @@ def latency(req: RequestBody):
             )
         })
 
-    return {"regions": result}
+    response.headers["Access-Control-Allow-Origin"] = "*"
+
+    return {
+        "regions": result
+    }
