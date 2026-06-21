@@ -1,0 +1,9 @@
+[project]
+name = "vercel-latency"
+version = "0.1.0"
+dependencies = [
+    "fastapi"
+]
+
+[tool.vercel]
+entrypoint = "api.latency:app"

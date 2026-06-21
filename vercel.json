@@ -1,7 +1,0 @@
-{
-  "functions": {
-    "api/latency.py": {
-      "runtime": "@vercel/python"
-    }
-  }
-}
